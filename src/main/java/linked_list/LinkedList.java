@@ -3,7 +3,7 @@ package linked_list;
 import java.util.List;
 
 public class LinkedList {
-    private final static String EMPTY_LINKED_LIST = "Linked List is empty";
+    private final static String EMPTY_LINKED_LIST_EXCEPTION = "Linked List is empty";
     ListNode head;
     int size = 0;
 
@@ -11,20 +11,14 @@ public class LinkedList {
         return head == null;
     }
     public void insertAtBeginning(ListNode node) {
-        if (isEmpty()) {
-            head = node;
-            head.setNext(null);
-        } else  {
-            node.setNext(head);
-            head = node;
-        }
+        node.setNext(head);
+        head = node;
         size++;
     }
 
     public void insertAtEnd(ListNode node) {
         if (isEmpty()) {
             head = node;
-            head.setNext(null);
         } else {
             ListNode temp  = head;
             while(temp.getNext() != null) {
@@ -38,10 +32,9 @@ public class LinkedList {
     public void insert(ListNode node, int position) {
         if (isEmpty()) {
             head = node;
-            head.setNext(null);
         }
         else if (position <= 0)      insertAtBeginning(node);
-        else if (position >= size)   insertAtEnd(node);
+        else if (position > size)   insertAtEnd(node);
         else {
             ListNode temp = head;
             for (int i = 0; i < position; i++) {
@@ -53,24 +46,25 @@ public class LinkedList {
         size++;
     }
 
-    public ListNode deleteFromBeginning() throws LinkedListException {
+    public ListNode removeFromBeginning() throws LinkedListException {
         if (isEmpty()) {
-            throw new LinkedListException(LinkedList.EMPTY_LINKED_LIST);
+            throw new LinkedListException(EMPTY_LINKED_LIST_EXCEPTION);
         }
         ListNode deletedNode = head;
         head = head.getNext();
+        deletedNode.setNext(null);
         size--;
         return deletedNode;
     }
 
-    public ListNode deleteFromEnd() throws LinkedListException {
+    public ListNode removeFromEnd() throws LinkedListException {
         if (isEmpty()){
-            throw new LinkedListException(LinkedList.EMPTY_LINKED_LIST);
+            throw new LinkedListException(EMPTY_LINKED_LIST_EXCEPTION);
         }
         ListNode deletedNode;
         if (head.getNext() == null) {
             // there is only 1 node
-            deletedNode = deleteFromBeginning();
+            deletedNode = removeFromBeginning();
         } else {
             ListNode temp = head.getNext();
             ListNode prevToTemp = head;
@@ -87,7 +81,7 @@ public class LinkedList {
 
     public void removeMatched(ListNode node) throws LinkedListException {
         if (isEmpty()){
-            throw new LinkedListException(LinkedList.EMPTY_LINKED_LIST);
+            throw new LinkedListException(EMPTY_LINKED_LIST_EXCEPTION);
         }
         if (head.equals(node)) {
             head = head.getNext();
@@ -106,5 +100,30 @@ public class LinkedList {
             }
         }
 
+    }
+
+    public ListNode remove(int position) throws LinkedListException {
+        if (isEmpty()){
+            throw new LinkedListException(EMPTY_LINKED_LIST_EXCEPTION);
+        }
+        ListNode deletedNode;
+        if (position <= 0){
+            deletedNode = removeFromBeginning();
+        } else if (position >= size) {
+            deletedNode = removeFromEnd();
+        } else {
+            ListNode temp = head;
+            for (int i = 1; i < position; i++) {
+                temp = temp.getNext();
+            }
+            deletedNode = temp.getNext();
+            temp.setNext(deletedNode.getNext());
+        }
+        size--;
+        return deletedNode;
+    }
+
+    public void delete() {
+        head = null;
     }
 }
