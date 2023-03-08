@@ -1,5 +1,6 @@
 package linked_list;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LinkedList {
@@ -9,6 +10,19 @@ public class LinkedList {
 
     public boolean isEmpty() {
         return head == null;
+    }
+
+    public List<Integer> getList() throws LinkedListException {
+        if (isEmpty()) {
+            throw new LinkedListException(EMPTY_LINKED_LIST_EXCEPTION);
+        }
+        ListNode currentNode = head;
+        List<Integer> list = new ArrayList<>();
+        while (currentNode != null) {
+            list.add(currentNode.getData());
+            currentNode = currentNode.getNext();
+        }
+        return list;
     }
     public void insertAtBeginning(ListNode node) {
         node.setNext(head);

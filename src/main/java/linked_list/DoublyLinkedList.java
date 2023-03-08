@@ -1,5 +1,8 @@
 package linked_list;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DoublyLinkedList {
     private DLLNode head;
     private DLLNode tail;
@@ -7,6 +10,19 @@ public class DoublyLinkedList {
 
     public boolean isEmpty() {
         return head == null;
+    }
+
+    public List<Integer> getList() throws LinkedListException {
+        if (isEmpty()){
+            throw new LinkedListException("Empty List Exception");
+        }
+        DLLNode currentNode = head;
+        List<Integer> list = new ArrayList<>();
+        while (currentNode != null) {
+            list.add(currentNode.getData());
+            currentNode = currentNode.getNext();
+        }
+        return list;
     }
 
     public void insertAtHead(int data) {
