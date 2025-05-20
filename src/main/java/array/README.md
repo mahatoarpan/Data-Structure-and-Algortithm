@@ -778,6 +778,224 @@ public class Solution {
 ```
 ---
 
+## Q9. Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+*leetcode - [Two Sum](https://leetcode.com/problems/two-sum/description/)*
+
+```
+Examples:
+
+    Input: nums = [2,7,11,15], target = 9
+    Output: [0,1]
+    Explanation: Because nums[0] + nums[1] == 9, we return [0, 1]
+    
+    Input: nums = [3,2,4], target = 6
+    Output: [1,2]
+    
+    Input: nums = [3,3], target = 6
+    Output: [0,1]
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** Have nested loop, where i will be needed to traverse outer loop and j for inner loop.
+
+**Step 2:** Loop i will be from `0 to n-1`.
+
+**Step 3:** Loop j will be from `i+1 to n-1`.
+
+**Step 4:** if `i + j == target`, return the 
+
+```java
+public class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                if (nums[i] + nums[j] == target) {
+                    return new int[]{i,j};
+                }
+            }
+        }
+        return new int[1];
+    }
+}
+// Time Complexity: O(n^2)
+// Space Complexity: O(1)
+```
+
+### Approach 2: Optimal (if index needed to return)
+
+**Step 1:** Declare hashmap <number at i index, index in array>
+
+**Step 2:** while iterating the array, check if `target - nums[i]` available in hashmap
+
+**Step 3:** If yes, return the array index stored in map along with i
+
+**Step 4:** If no, add the new combination `<nums[i], i>` into hashmap
+
+```java
+public class Solution {
+
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int rem = target - nums[i];
+            if (map.containsKey(rem)) {
+                return new int[]{map.get(rem), i};
+            } else {
+                map.put(nums[i], i);
+            }
+        }
+        return null;
+    }
+}
+// Time complexity: O(n)
+// Space complexity: O(n)
+```
+
+### Approach 3: Optimal (if true or false should be returned)
+
+**Step 1:** Sort the array
+
+**Step 2:** Use two pointers to traverse the array, `low = 0, high = nums.length - 1`
+
+**Step 3:** If `nums[low] + nums[high] == target`, return true
+
+**Step 4:** else if `nums[low] + nums[high] < target`, increment low by 
+
+**Step 5:** else `nums[low] + nums[high] > target`, decrement high by 1
+
+```java
+public class Solution {
+
+    public boolean twoSum(int[] nums, int target) {
+        int low = 0, high = nums.length - 1;
+        Arrays.sort(nums);
+        while (low < high) {
+            int sum = low + high;
+            if (sum == target) {
+                return true;
+            } else if (sum < target) {
+                low++;
+            } else {
+                high--;
+            }
+        }
+        return false;
+    }
+}
+// Time complexity: O(n * log n) + O(n)
+// Space complexity: O(1)
+```
+---
+
+## Q10. Given an array nums with n objects colored red, white, or blue, sort them in-place so that objects of the same color are adjacent, with the colors in the order red, white, and blue.
+
+*leetcode - [Sort Colors](https://leetcode.com/problems/sort-colors/description/)*
+
+```
+Examples:
+
+    Input: nums = [2,0,2,1,1,0]
+    Output: [0,0,1,1,2,2]
+    
+     Input: nums = [2,0,1]
+    Output: [0,1,2]
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** Count 0's, 1's and 2's.
+
+**Step 2:** Loop for 0's count times and start replacing elements from 0th position.
+
+**Step 3:** Loop for 1's count times from 0's count position + 1
+
+**Step 4:** Loop for 2's count times from (0's count + 1's count) position + 1
+
+
+```java
+public class Solution {
+    public void sortColors(int[] nums) {
+        int count0s = 0, count1s = 0, count2s = 0;
+        for (int num : nums) {
+            switch (num) {
+                case 0:
+                    count0s++; break;
+                case 1:
+                    count1s++; break;
+                case 2:
+                    count2s++; break;
+            }
+        }
+        for (int i = 0; i < nums.length; i++) {
+            if (count0s > 0 ) {
+                nums[i] = 0;
+                count0s--;
+            } else if (count1s > 0) {
+                nums[i] = 1;
+                count1s--;
+            } else {
+                nums[i] = 2;
+            }
+        }
+    }
+}
+// Time Complexity: O(n) + O(n)
+// Space Complexity: O(1)
+```
+
+### Approach 2: Optimal (Dutch National Flag Algorithm)
+
+*Intuition: Assuming that all the elements should fall in this sequence to be sorted. `[0...(low-1)] -> 0`, `[low...(mid-1)] -> 1`, `[mid...high] -> 2`*
+
+**Step 1**: Initialize `low = 0, mid = 0, high = nums.length - 1`
+
+**Step 2**: Iterate the array till `mid <= high`
+
+**Step 3:** If `nums[mid] == 0`, swap nums[low] and nums[mid] and increment both low and mid by 1
+
+**step 4:** If `nums[mid] == 1`, just increment mid by 1
+
+**Step 5:** If `nums[mid] == 2`, swap nums[mid] and nums[high] and decrement high by 1
+
+```java
+public class Solution {
+
+    public void sortColors(int[] nums) {
+        int low, mid, high;
+        low = 0; high = nums.length; mid = 0;
+
+        while(mid <= high) {
+            switch(nums[mid]) {
+                case 0:
+                    swap(nums, low, mid);
+                    low++; mid++;
+                    break;
+                case 1:
+                    mid++;
+                    break;
+                case 2:
+                    swap(nums, mid, high);
+                    high--;
+                    break;
+            }
+
+        }
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+---
+
+
 
 
 
