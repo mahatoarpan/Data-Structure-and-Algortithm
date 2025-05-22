@@ -995,7 +995,162 @@ public class Solution {
 ```
 ---
 
+## Q11. Given an array nums of size n, return the majority element.
 
+The majority element is the element that appears more than `⌊n / 2⌋` times. You may assume that the majority element always exists in the array.
+
+*leetcode - [Majority Element](https://leetcode.com/problems/majority-element/)*
+```
+Examples: 
+    Input: nums = [3,2,3]
+    Output: 3
+    
+    Input: nums = [2,2,1,1,1,2,2]
+    Output: 2
+```
+
+### Approach 1: Brute Force
+
+Pick the element at index `i` and count the occurrences in the array. If occurrences is more than `⌊n / 2⌋` times return the element.
+
+```java
+// Time complexity: O(n ^ 2)
+// Space Complexity: O(1)
+```
+
+### Approach 2: Better
+
+**Step 1:** Use hashmap to store `<element, count>` pairs
+
+**Step 2:** Traverse the array and update the count of the element. Simultaneously check if the count is greater than `⌊n / 2⌋`.
+
+```java
+import java.util.HashMap;
+
+public class Solution {
+    public int majorityElement(int[] nums) {
+        Map<Integer, Integer> countMap = new HashMap<>();
+        for (int num : nums) {
+            int count = countMap.getOrDefault(num, 0);
+            countMap.put(num, count + 1);
+            
+            if (count + 1 > nums.length / 2) {
+                return num;
+            }
+        }
+        return -1;
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(n/2)
+```
+
+### Approach 3: Optimal [Moore's Voting Algorithm]
+
+*Intuition:*
+*The question clearly states that the array has a majority element. Since it has a majority element we can say, the max count will definitely be more than `⌊n / 2⌋`.*
+    
+    Majority element count = n/2 + x
+    Other elements = n/2 - x
+    where x is the number of times it occurs after reaching n/2
+
+*Now, we can say that count of majority elements are equal upto a certain point of time in array. So, when we traverse through the array we try to keep track of the count of elements and which element we are tracking. Since the majority element apprears more than n/2 times, we say that at some point in the array traversal we find the majority element.*
+
+**Step 1:** Initialize two variables: `count: for tracking the count of element` and `candidate: store the candidate who has a positive count`
+
+**Step 2:** While traversing the array, if `count == 0`, then change candidate to the current candidate
+
+**Step 3:** if `candidate == current array element`, count increased by 1, else count decreased by  1.
+
+```java
+import java.util.HashMap;
+
+public class Solution {
+    public int majorityElement(int[] nums) {
+        int count = 0; int candidate = nums[0];
+        for (int num : nums) {
+            count = candidate == num ? count + 1 : count - 1;
+            if (count == 0) {
+                candidate = num;
+            }
+        }
+        return candidate;
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+---
+
+## Q12. Given an integer array nums, find the subarray with the largest sum, and return its sum.
+
+*leetcode - [Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)*
+
+```
+Examples:
+    Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+    Output: 6
+    Explanation: The subarray [4,-1,2,1] has the largest sum 6.
+    
+    Input: nums = [5,4,-1,7,8]
+    Output: 23
+    Explanation: The subarray [5,4,-1,7,8] has the largest sum 23.
+```
+
+### Approach 1: Brute Force
+
+Find the sum for all subarray and compare with the current max sum.
+
+```java
+public class Solution {
+    public int maxSubArray(int[] nums) {
+        int maxSum = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            int sum = nums[i];
+            for (int j = i + 1; j < nums.length; j++) {
+                sum+= nums[j];
+                maxSum = Math.max(maxSum, sum);
+            }
+        }
+        return maxSum;
+    }
+}
+// Time Complexity: O(n^2)
+// Space Complexity: O(1)
+```
+
+### Approach 2: Optimal [Kadane's Algorithm]
+
+**Step 1:** Assign two variables: `maxSoFar` and `sum`
+
+**Step 2:** Traverse the array and add `nums[i]` to sum
+
+**Step 3:** if `sum < nums[i]`, then `sum = arr[i]`
+
+**Step 4:** if `sum > maxSoFar`, then `maxSoFar = sum`
+
+```java
+public class Solution {
+    public int maxSubArray(int[] nums) {
+        int maxSoFar = Integer.MIN_VALUE;
+        int sum = 0;
+        
+        for (int num : nums ) {
+            sum += num;
+            if (sum < num) {
+                sum = num;
+            }
+            maxSoFar = Math.max(maxSoFar, sum);
+        }
+        return maxSoFar;
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+---
+
+## Q13. 
 
 
 
