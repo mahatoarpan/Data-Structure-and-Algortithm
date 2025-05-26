@@ -1150,11 +1150,98 @@ public class Solution {
 ```
 ---
 
-## Q13. 
+## Q13. You are given a 0-indexed integer array nums of even length consisting of an equal number of positive and negative integers. You should return the array of nums such that the the array follows the given conditions:
 
+**Every consecutive pair of integers have opposite signs**
 
+**For all integers with the same sign, the order in which they were present in nums is preserved.**
+ 
+**The rearranged array begins with a positive integer.**
 
+*leetcode - [Rearrange Array Elements by Sign](https://leetcode.com/problems/rearrange-array-elements-by-sign/description/)*
 
+```
+Example:
+
+    Input: nums = [3,1,-2,-5,2,-4]
+    Output: [3,-2,1,-5,2,-4]
+    Explanation:
+    The positive integers in nums are [3,1,2]. The negative integers are [-2,-5,-4].
+    The only possible way to rearrange them such that they satisfy all conditions is [3,-2,1,-5,2,-4].
+    Other ways such as [1,-2,2,-5,3,-4], [3,1,2,-2,-5,-4], [-2,3,-5,1,-4,2] are incorrect because they do not satisfy one or more conditions.  
+    
+    Input: nums = [-1,1]
+    Output: [1,-1]
+    Explanation:
+    1 is the only positive integer and -1 the only negative integer in nums.
+    So nums is rearranged to [1,-1].
+
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** Create 2 new arrays of `originalLen / 2` length.
+
+**Step 2:** While traversing the original array, add positives to positive array and negatives to negative array
+
+**Step 3:** add back the numbers in original array, one from positive and one from negative at a time
+
+```java
+class Solution {
+    public int[] rearrangeArray(int[] nums) {
+        int originalLen = nums.length;
+        int[] positives = new int[originalLen / 2];
+        int[] negatives = new int[originalLen / 2];
+        int posIndex = 0, negIndex = 0;
+        
+        for (int num : nums) {
+            if (num < 0) {
+                negatives[negIndex++] = num;
+            } else {
+                positives[posIndex++] = num;
+            }
+        }
+        posIndex = 0; negIndex = 0;
+        for (int i = 0; i < originalLen / 2; i++) {
+            nums[2 * i] = positives[posIndex++];
+            nums[(2 * i) + 1] = negatives[negIndex++];
+        }
+        return nums;
+    }
+}
+// Time Complexity: O(n) + O(n/2)
+// Space Complexity: O(n)
+```
+
+### Approach 2: Optimal
+
+**Step 1:** Take two pointers `pos = 0` and `neg = 1`
+
+**Step 2:** If nums[i] is positive, add nums[i] at result[pos] and then increase pos by 1
+
+**Step 2:** If nums[i] is negative, add nums[i] at result[neg] and then increase neg by 1
+
+```java
+class Solution {
+    public int[] rearrangeArray(int[] nums) {
+        int[] res = new int[nums.length];
+        int posIndex = 0, negIndex = 1;
+        
+        for (int num : nums) {
+            if (num < 0) {
+                res[negIndex] = num;
+                negIndex += 2;
+            } else {
+                res[posIndex] = num;
+                posIndex += 2;
+            }
+        }
+        return res;
+    }
+} 
+// Time Complexity: O(n)
+// Space Complexity: O(n)
+```
 
 
 
