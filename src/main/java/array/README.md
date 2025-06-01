@@ -1242,6 +1242,478 @@ class Solution {
 // Time Complexity: O(n)
 // Space Complexity: O(n)
 ```
+## Q14. Find next lexicographically greater permutation. If such arrangement is not possible, rearrange the array as the lowest possible order
+
+*leetcode - [Next Permutation](https://leetcode.com/problems/next-permutation/description/)*
+
+```
+Examples:
+
+    Input: [1, 2, 3]
+    Output: [1, 3, 2]
+    
+    Input: [3, 2, 1]
+    Output: [1, 2, 1]    
+
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** Find all possible permutations of elements present and store them.
+
+**Step 2:** Search input from all possible permutations.
+
+**Step 3:** Print the next permutation present right after it.
+
+```
+// Time Complexity: O(n! * n) - n! to find all possible permutation
+// Space Complexity: O(1)
+```
+
+### Approach 2: Optimal
+
+**Step 1:** Find the break point while traversing from right to left. Breakpoint - nums[i] < nums[i + 1]
+
+**Step 2:** Find a number from right to i which is greater than nums[i] but smallest in the remaining array and swap.
+
+**Step 3:** Reverse the array after ith index.
+
+```java
+class Solution {
+    public void nextPermutation(int[] nums) {
+        int breakIndex = -1;
+        for (int i = nums.length - 2; i >= 0; i--) {
+            if (nums[i] < nums[i + 1]) {
+                breakIndex = i;
+                break;
+            }
+        }
+        if (breakIndex != -1 ){
+            for (int i = nums.length - 1; i >= breakIndex; i--) {
+                if (nums[i] > nums[breakIndex]) {
+                    int temp = nums[i];
+                    nums[i] = nums[breakIndex];
+                    nums[breakIndex] = temp;
+                    break;
+                }
+            }
+        }
+        int left = breakIndex + 1, right = nums.length - 1;
+        while(left < right) {
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+// Time Complexity: O(3n)
+// Space Complexity: O(1)
+```
+
+## Q15. Print all the elements which are leaders. A leader is an element that is greater than all the elements on its right side in the array.
+
+*TUF - [Leaders in an Array](https://takeuforward.org/data-structure/leaders-in-an-array/)*
+
+```
+Examples:
+    Input: [4, 7, 1, 0]
+    Output: 7 1 0
+    Explanation: Rightmost element is always a leader. 7 and 1 are greater than the elements in their right side.
+    
+    Input: [10, 22, 12, 3, 0, 6]
+    Output: 22 12 6
+    Explanation: 6 is a leader. In addition to that, 12 is greater than all the elements in its right side (3, 0, 6), also 22 is greater than 12, 3, 0, 6.
+
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** Start checking the element from the start of the array.
+
+**Step 2:** If the element at observation is greater than all the elements at right add it to the output array.
+
+```
+// Time Complexity: O(n^2)
+// Space Complexity: O(n)
+```
+
+### Approach 2: Optimal
+
+**Step 1:** Starting from the right side of the array, check if the current element is the greatest till now
+
+**Step 2:** if current element is the greatest till now add it to the result
+
+**Step 3:** reverse the result array
+
+```java
+public class Solution {
+    public int[] leader(int[] nums) {
+        int maxSoFar = Integer.MIN_VALUE;
+        List<Integer> resList = new ArrayList<>();
+
+        for (int i = nums.length - 1; i >= 0; i--) {
+            if (nums[i] > maxSoFar) {
+                maxSoFar = nums[i];
+                resList.add(maxSoFar);
+            }
+        }
+        Collections.reverse(resList);
+        return resList.stream().toArray(int[]::new);
+    }
+}
+// Time Complexity: O(2n)
+// Space Complexity: O(n)
+```
+
+### Q16. Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.
+
+*leetcode - [Longest Consecutive Sequence](https://leetcode.com/problems/longest-consecutive-sequence/description/)
+
+```
+Examples:
+    
+    Input: nums = [100,4,200,1,3,2]
+    Output: 4
+    Explanation: The longest consecutive elements sequence is [1, 2, 3, 4]. Therefore its length is 4.
+
+    Input: nums = [0,3,7,2,5,8,4,6,0,1]
+    Output: 9
+```
+
+### Approach 1: Brute force
+
+**Step 1:** Sort the array
+
+**Step 2:** Traverse the sorted array having two pointers - lastSmallest and current
+
+**Step 3:** If lastSmallest == current, continue to next iteration
+
+**Step 4:** If lastSmallest == current - 1, increment count and lastSmallest to current
+
+**Step 5:** Else if lastSmallest != current - 1, get max of count and longestCount, set lastSmallest to current
+
+```java
+public class Solution {
+    public int longestConsecutive(int[] nums) {
+        Arrays.sort(nums);
+        int longest = 1, count = 1, lastSmallest = nums[0];
+        for (int currentIdx = 1; currentIdx < nums.length; currentIdx++) {
+            if (lastSmallest == nums[currentIdx]) {
+                continue;
+            } else if(lastSmallest == nums[currentIdx] - 1) {
+                count++;
+                lastSmallest = nums[currentIdx];
+            } else {
+                longest = Math.max(longest, count);
+                count = 1;
+                lastSmallest = nums[currentIdx];
+            }
+        }
+        return Math.max(longest, count);
+    }
+}
+// Time Complexity: O(n * log n)
+// Space Complexity: O(1)
+```
+
+### Approach 2: Optimal
+
+**Step 1:** Put everything into set data structure.
+
+**Step 2:** Traverse the array
+
+**Step 3:** Check if set contains nums[currentIdx] - 1 value
+
+**Step 4:** If yes, step the iteration
+
+**Step 5:** If no, iterate over the set until set does not contain the next number
+
+```java
+public class Solution {
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        int longest = 0;
+        for (int num : nums) {
+            set.add(num);
+        }
+        
+        for (int num : nums) {
+            if (set.contains(num - 1)) {
+                continue;
+            }
+            int count = 0;
+            int temp = num;
+            while(set.contains(temp)) {
+                count++;
+                set.remove(temp);
+                temp++;
+            }
+            longest = Math.max(longest, count);
+        }
+        return longest;
+    }
+}
+// Time Complexity: O(2n)
+// Space Complexity: O(n)
+```
+
+## Q17. Given an m x n integer matrix, if an element is 0, set its entire row and column to 0's.
+
+*leetcode - [Set Matrix Zeroes](https://leetcode.com/problems/set-matrix-zeroes/description/)*
+
+    Examples:
+
+        Input: matrix = [[1,1,1],[1,0,1],[1,1,1]]
+        Output: [[1,0,1],[0,0,0],[1,0,1]]
+        
+        Input: matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+        Output: [[0,0,0,0],[0,4,5,0],[0,3,1,0]]
+
+![Example 1](../../../../images/set_matrix_zeroes1.png)
+![Example 2](../../../../images/set_matrix_zeroes2.png)
+
+
+### Approach 1: Brute force
+
+**Step 1:** While traversing the matrix identify zeroes.
+
+**Step 2:** If current element is zero, mark all other non-zero elements in the row and column as -1
+
+**Step 3:** Again iterate over the matrix, if element is -1 then make it 0
+
+
+```java
+public class Solution {
+    public int[][] setZero(int[][] matrix) {
+
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                if(matrix[i][j] == 0) {
+                    for(int k = 0; k < matrix.length; k++) {
+                        matrix[k][j] = matrix[k][j] == 0 ? 0 : -1;
+                    }
+                    for(int k = 0; k < matrix[i].length; k++) {
+                        matrix[i][k] = matrix[i][k] == 0 ? 0 : -1;
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++){
+                if(matrix[i][j] == -1)  matrix[i][j] = 0;
+            }
+        }
+
+        return matrix;
+    }
+} 
+// Time Complexity: O(n * m * (n + m)) 
+// Space Complexity: O(1)
+```
+
+### Approach 2: Better
+
+**Step 1:** Initialize 2 tracker arrays - ros and cols
+
+**Step 2:** While iteration through the matrix, if 0 is found, mark rows[i] and cols[j] as 1, indicating they contain zero.
+
+**Step 3:** Iterate over rows and if rows[i] is 1 then mark that row as zero in matrix
+
+**Step 4:** Iterate over cols and if cols[i] is 1 then mark that col as zero in matrix
+
+```java
+public class Solution {
+    public int[][] setZero_Approach2(int[][] matrix) {
+        int[] rows = new int[matrix.length];
+        int[] cols = new int[matrix[0].length];
+
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                if(matrix[i][j] == 0) {
+                    rows[i] = 1;
+                    cols[j] = 1;
+                }
+            }
+        }
+
+        for(int i = 0; i < rows.length; i++) {
+            if(rows[i] == 1) {
+                for(int j = 0; j < matrix[0].length; j++) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        for(int i = 0; i < cols.length; i++) {
+            if(cols[i] == 1) {
+                for(int j = 0; j < matrix.length; j++) {
+                    matrix[j][i] = 0;
+                }
+            }
+        }
+        return matrix;
+    }
+}
+// Time Complexity: O(n * m)
+// Space Complexity: O(n + m)
+```
+
+### Approach 3: Optimal
+
+*Intuition: In the previous approach, the time complexity is minimal as the traversal of a matrix takes at least O(NxM)(where N = row and M = column). instead of using two extra matrices row and col, we will use the 1st row and 1st column of the given matrix to keep a track of the cells that need to be marked with 0. But here comes a problem. If we try to use the 1st row and 1st column to serve the purpose, the cell matrix[0][0] is taken twice. To solve this problem we will take an extra variable col0 initialized with 1. Now the entire 1st row of the matrix will serve the purpose of the row array. And the 1st column from (0,1) to (0,m-1) with the col0 variable will serve the purpose of the col array.*
+
+**Step 1:** Traverse the matrix and mark the proper cells of 1st row and column with 0 accordingly.  The marking will be like this: if cell(i, j) contains 0, mark the ith row, with 0 and mark jth column with 0. If i is 0 and mark `matrix[0][0]` with 0 but if j is 0, mark thc `col0` variable with 0 instead of marking `matrix[0][0]` again.
+
+**Step 2:** Now modify the cells from (1,1) to (n-1, m-1) using the values from 1st row and 1st column and col0.
+
+**Step 3:** Finally, change the 1st row and 1st column using the values from `matrix[0][0]` and col0. First change the row and then column
+
+```java
+public class Solution {
+    public int[][] setZero_Approach3(int[][] matrix) {
+
+        int col0 = 1;
+        // step 1: Traverse the matrix and
+        // mark 1st row & col accordingly:
+        for (int i  = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0; // mark ith row
+
+                    if (j != 0) {
+                        matrix[0][j] = 0; // mark jth column
+                    } else {
+                        col0 = 0;
+                    }
+                }
+            }
+        }
+
+        // step 2: mark with 0 from (1,1) to (n-1,m-1)
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[i].length; j++) {
+                if (matrix[i][j] != 0) {
+                    // check for col and row
+                    if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                        matrix[i][j] = 0;
+                    }
+                }
+            }
+        }
+
+        // step 3: finally mark the 1st col and then 1st row
+        if (matrix[0][0] == 0) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                matrix[0][j] = 0;
+            }
+        }
+        if (col0 == 0) {
+            for (int i = 0 ; i < matrix.length; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+
+        return matrix;
+    }
+}
+// Time Complexity: O(2*(n*m))
+// Space Complexity: O(1)
+```
+
+## Q18. You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
+
+* leetcode - [Rotate Image](https://leetcode.com/problems/rotate-image/description/)*
+
+
+```
+Examples:
+    Input: matrix = [[1,2,3],
+                     [4,5,6],
+                     [7,8,9]]
+    Output: [[7,4,1],
+             [8,5,2],
+             [9,6,3]]
+             
+    Input: matrix = [[5,1,9,11],
+                     [2,4,8,10],
+                     [13,3,6,7],
+                     [15,14,12,16]]
+    Output: [[15,13,2,5],
+             [14,3,4,1],
+             [12,6,8,9],
+             [16,7,10,11]]
+
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** Fill the rotated values into a new matrix using formula: `result[j][n-1-i] = matrix[i][j]`
+
+```java
+public class Solution {
+    public void rotate(int[][] matrix) {
+        int[][] result = new int[matrix.length][matrix.length];
+        
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                result[j][matrix.length - 1 - i] = matrix[i][j];
+            }
+        }
+        return result;
+    }
+}
+// Time Complexity: O(n * n)
+// Space Complexity: O(n * n)
+```
+
+### Approach 2: Optimal
+
+**Step 1:** Transpose the matrix.
+
+**Step 2:** Reverse each row of the matrix.
+
+```java
+public class Solution {
+    public int[][] rotate(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = i; j < matrix.length; j++) {
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
+            }
+        }
+
+        for (int i = 0; i <  matrix.length; i++) {
+            for (int j = 0; j < matrix.length / 2; j++) {
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[i][matrix.length - 1 -j];
+                matrix[i][matrix.length - 1 - j] = temp;
+            }
+        }
+        return matrix;
+    }
+}
+// Time Complexity: O(2*(n * n)
+// Space Complexity: O(1)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

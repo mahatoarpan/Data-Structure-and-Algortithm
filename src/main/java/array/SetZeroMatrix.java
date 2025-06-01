@@ -58,49 +58,44 @@ public class SetZeroMatrix {
 
     public int[][] setZero_Approach3(int[][] matrix) {
 
-        boolean firstZeroRow = false;
-        boolean firstZeroCol = false;
+        int col0 = 1;
+        // step 1: Traverse the matrix and
+        // mark 1st row & col accordingly:
+        for (int i  = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0; // mark ith row
 
-        for(int i = 0; i < matrix.length; i++) {
-            if(matrix[i][0] == 0){
-                firstZeroRow = true;
-                break;
-            }
-        }
-
-        for (int i = 0; i < matrix[0].length; i++) {
-            if(matrix[0][i] == 0) {
-                firstZeroCol = true;
-                break;
-            }
-        }
-
-        for(int i = 0; i < matrix.length; i++) {
-            for(int j = 0; j < matrix[i].length; j++) {
-                if(matrix[i][j] == 0) {
-                    matrix[i][0] = 0;
-                    matrix[0][j] = 0;
+                    if (j != 0) {
+                        matrix[0][j] = 0; // mark jth column
+                    } else {
+                        col0 = 0;
+                    }
                 }
             }
         }
 
-        for(int i = matrix.length - 1; i >= 0; i--) {
-            for(int j = matrix[i].length - 1; j > 0; j--) {
-                if(matrix[i][0] == 0 || matrix[0][j] == 0){
-                    matrix[i][j] = 0;
+        // step 2: mark with 0 from (1,1) to (n-1,m-1)
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[i].length; j++) {
+                if (matrix[i][j] != 0) {
+                    // check for col and row
+                    if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                        matrix[i][j] = 0;
+                    }
                 }
             }
         }
 
-        if(firstZeroRow) {
-            for(int i = 0; i < matrix.length; i++) {
+        // step 3: finally mark the 1st col and then 1st row
+        if (matrix[0][0] == 0) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                matrix[0][j] = 0;
+            }
+        }
+        if (col0 == 0) {
+            for (int i = 0 ; i < matrix.length; i++) {
                 matrix[i][0] = 0;
-            }
-        }
-
-        if(firstZeroCol) {
-            for (int i = 0; i < matrix[0].length; i++) {
-                matrix[0][i] = 0;
             }
         }
 
