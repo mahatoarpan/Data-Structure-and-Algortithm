@@ -220,5 +220,312 @@ Examples:
 
 *leetcode - [Find First and Last Position of Element in Sorted Array](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/description/)*
 
+```
+Examples:
 
+    Input: nums = [5,7,7,8,8,10], target = 8
+    Output: [3,4]
+    
+    Input: nums = [5,7,7,8,8,10], target = 6
+    Output: [-1,-1]
+
+    Input: nums = [], target = 0
+    Output: [-1,-1]
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** initialize two variables, first and last, to store the first position and last occurrence position.
+
+**Step 2:** iterate over the array
+
+**Step 3:** if target found, update the last variable with that position. Update the first variable only when it was marked as -1 initially.
+
+```java
+public class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int[] result = {-1, -1};
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == target) {
+                if (first == - 1){
+                    first = i;
+                }
+                last = i;
+            }
+        }
+        return result;
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+
+### Approach 2: Optimal 1 
+
+**Step 1:** Find the lower bound
+
+**Step 2:** If lower bound is available, search for upper bound
+
+**Step 3:** Else, return {-1,-1}
+
+```java
+public class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        if(nums == null || nums.length == 0){
+            return new int[]{-1,-1};
+        }
+        int lower = lowerBound(nums, target);
+        if(lower == -1) {
+            return new int[]{-1,-1};
+        } else {
+            int upper = upperBound(nums, target);
+            return new int[]{lower, upper};
+        }
+    }
+
+    private int lowerBound(int[] nums, int target) {
+        int low = 0, high = nums.length - 1;
+        int result = nums.length;
+        while(low <= high) {
+            int mid = low + ((high - low) / 2);
+            if(target <= nums[mid]) {
+                result = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+
+        }
+        return result == nums.length ||
+                nums[result] != target ?
+                -1 : result;
+    }
+
+    private int upperBound(int[] nums, int target) {
+        int low = 0, high = nums.length - 1;
+        int result = nums.length;
+        while(low <= high) {
+            int mid = low + ((high - low) / 2);
+            if(target < nums[mid]) {
+                result = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return result - 1;
+    }
+}
+// Time Complexity: O(log n) + O(log n)
+// Space Complexity: O(1)
+```
+
+### Approach 3: Optimal 2
+
+**Step 1:** Find the first occurrence using binary search
+
+**Step 2:** If first occurrence is not -1, find the last occurrence
+
+**Step 3:** Else return {-1, -1}
+
+```java
+public class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int[] res = new int[]{-1,-1};
+        if (nums == null || nums.length == 0) {
+            return res;
+        }
+        res[0] = findFirstIndex(nums, target);
+        if (res[0] != -1) {
+            res[1] = findLastIndex(nums, target);
+        }
+        return res;
+    }
+    
+    private int findFirstIndex(int[] nums, int target) {
+        int low = 0, high = nums.length - 1;
+        int res = -1;
+        
+        while (low <= high) {
+            int mid = low + ((high - low) / 2);
+            if (nums[mid] == target) {
+                res = mid;
+                high = mid - 1;
+            } else if(nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+    }
+
+    private int findLastIndex(int[] nums, int target) {
+        int low = 0, high = nums.length - 1;
+        int res = -1;
+
+        while (low <= high) {
+            int mid = low + ((high - low) / 2);
+            if (nums[mid] == target) {
+                res = mid;
+                low = mid + 1;
+            } else if(nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+    }
+}
+// Time Complexity: O(log n) + O(log n)
+// Space Complexity: O(1)
+```
+
+## Q6. Given the array nums after the possible rotation and an integer target, return the index of target if it is in nums, or -1 if it is not in nums.
+
+*leetcode - [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/description/)*
+
+```
+Examples:
+
+    Input: nums = [4,5,6,7,0,1,2], target = 0
+    Output: 4
+    
+    Input: nums = [4,5,6,7,0,1,2], target = 3
+    Output: -1
+    
+    Input: nums = [1], target = 0
+    Output: -1
+```
+
+### Approach 1: Brute Force
+
+**Linear Search**
+
+```
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+
+### Approach 2: Optimal
+
+**Step 1:** find the rotation index
+
+**Step 2:** if rotation index is -1, use binary search on complete array as array is not rotated
+
+**Step 3:** else, check `target < nums[0]`, if yes, binary search on array from rotation index till end of array. Target can possibly be in the rotated part
+
+**Step 4:** If `target >= nums[0]`, binary search on array from 0 till rotation index - 1. 
+
+```java
+class Solution {
+    public int search(int[] nums, int target) {
+        if(nums == null || nums.length == 0) {
+            return -1;
+        }
+        int breakPoint = findBreakPoint(nums);
+        int res = -1;
+        int low = 0, high = nums.length - 1;
+
+
+        if(breakPoint == -1) {
+            // completely sorted array
+            return binarySearch(nums, 0, nums.length - 1, target);
+        } else {
+            return target < nums[0] ? 
+                binarySearch(nums, breakPoint, nums.length -1, target) : 
+                binarySearch(nums, 0, breakPoint - 1, target);
+        }
+
+    }
+    
+    private int findBreakPoint(int[] nums) {
+        if(nums[0] < nums[nums.length - 1]) {
+            return -1;
+        }
+        int res = -1;
+        int low = 0, high = nums.length - 1;
+        while(low <= high) {
+            int mid = low + ((high - low)/2);
+            if(nums[mid] < nums[0]) {
+                res = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return res;
+    }
+
+    private int binarySearch(int[] nums, int low, int high, int target) {
+        while(low <= high) {
+            int mid = low + ((high - low) / 2);
+            if(target == nums[mid]) {
+                return mid;
+            } else if(target < nums[mid]) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return -1;
+    }
+}
+// Time Complexity: O(log n) + O(log n)
+// Space Complexity: O(1)
+```
+
+## Q7. Given the array nums after the rotation and an integer target, return true if target is in nums, or false if it is not in nums.
+
+*leetcode - [Search in Rotated Sorted Array II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/description/)*
+
+```
+Examples:
+
+    Input: nums = [2,5,6,0,0,1,2], target = 0
+    Output: true
+    
+    Input: nums = [1,0,1,1,1], target = 0
+    Output: true
+```
+
+```java
+class Solution {
+    public boolean search(int[] nums, int target) {
+        if(nums == null || nums.length == 0) {
+            return false;
+        }
+        int low = 0, high = nums.length - 1;
+        while(low <= high) {
+            int mid = low + ((high - low)/2);
+            if(nums[mid] == target) {
+                return true;
+            } 
+            
+            if(nums[low] == nums[mid] && nums[mid] == nums[high]) {
+                low++;
+                high--;
+                continue;
+            } 
+            if (nums[low] <= nums[mid]) {
+                // sorted left half
+                if(nums[low] <= target && target <= nums[mid]) {
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            } else {
+                // sorted right half
+                if(nums[mid] <= target && target <= nums[high]) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+        }
+        return false;
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
 
