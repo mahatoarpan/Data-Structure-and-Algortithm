@@ -529,3 +529,234 @@ class Solution {
 // Space Complexity: O(1)
 ```
 
+## Q8. Given the sorted rotated array nums of unique elements, return the minimum element of this array.
+
+*leetcode - [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/description/)*
+
+```
+Examples:
+
+    Input: nums = [3,4,5,1,2]
+    Output: 1
+
+    Input: nums = [11,13,15,17]
+    Output: 11
+```
+
+### Approach 1: Brute Force
+
+*Linear search over the array and store the minimum number*
+
+```
+Time Complexity: O(n)
+Space Complexity: O(1)
+```
+
+### Approach 2: Optimal
+
+**Step 1:** Find the rotated index, as rotated index is the smallest element
+
+**Step 2:** If rotated index is -1, array is not sorted, return nums[0]
+
+**Step 3:** If rotated index is something else, then return nums[rotated_index]
+
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        int res = -1;
+        int low = 0, high = nums.length - 1;
+        while(low <= high) {
+            int mid = low + ((high - low)/2);
+            if(nums[mid] < nums[0]) {
+                res = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        return res == -1 ? nums[0] : nums[res];
+    }
+}
+// Time Complexity: O(log n)
+// Space Complexity: O(1)
+```
+
+## Q9. given a sorted array consisting of only integers where every element appears exactly twice, except for one element which appears exactly once. Return the single element that appears only once.
+
+*leetcode - [Single Element in a Sorted Array](https://leetcode.com/problems/single-element-in-a-sorted-array/description/)*
+*video explanation - [YouTube](https://youtu.be/AZOmHuHadxQ)
+
+```
+Examples:
+
+    Input: nums = [1,1,2,3,3,4,4,8,8]
+    Output: 2
+    
+    Input: nums = [3,3,7,7,10,11,11]
+    Output: 10
+```
+
+### Approach 1: Brute Force 1
+
+**Step 1:** Check for Edge cases first
+    
+    Case 1: When there is only 1 element in the array
+    Case 2: When first element is the result
+    Case 3: When last element is the result
+
+**Step 2:** Start iterating from 1st element in the array and check if the element is either equal to its left or right. If not then element is the answer.
+
+```java
+public class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        if (nums.length == 1 || nums[0] != nums[1]) {
+            return nums[0];
+        }
+        if (nums[nums.length - 2] != nums[nums.length - 1]){
+            return nums[nums.length - 1];
+        }
+        
+        for (int i = 1; i < nums.length - 1; i++) {
+            if (nums[i - 1] != nums[i] && nums[i] != nums[i+1]) {
+                return nums[i];
+            }
+        }
+        return -1
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+
+### Approach 2: Brute Force 2
+
+XOR all the elements, all the elements which occurs twice will cancel each other.
+
+```java
+public class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        int result = 0;
+        for (int num : nums) {
+            result = result ^ num;
+        }
+        return result;
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+
+### Approach 3: Optimal
+
+**Step 1:** Check for Edge cases first
+
+    Case 1: When there is only 1 element in the array
+    Case 2: When first element is the result
+    Case 3: When last element is the result
+
+**Step 2:** Place the 2 pointers i.e. low and high: Initially, we will place the pointers excluding index 0 and n-1 like this: low will point to index 1, and high will point to index n-2 i.e. the second last index.
+
+**Step 3:** Check if `arr[mid]` is the single element:
+If `arr[mid] != arr[mid-1]` and `arr[mid] != arr[mid+1]`: If this condition is true for `arr[mid]`, we can conclude `arr[mid]` is the single element. We will return `arr[mid]`.
+
+**Step 4:** If `(mid % 2 == 0 and arr[mid] == arr[mid+1])` or `(mid%2 == 1 and arr[mid] == arr[mid-1])`: 
+This means we are in the left half and we should eliminate it as our single element appears on the right. So, we will do this:
+`low = mid+1`.
+
+**Step 5:** Otherwise, we are in the right half and we should eliminate it as our single element appears on the left. So, we will do this: `high = mid-1`.
+
+
+```java
+public class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        if (nums.length == 1 || nums[0] != nums[1]) {
+            return nums[0];
+        }
+        if (nums[nums.length - 2] != nums[nums.length - 1]){
+            return nums[nums.length - 1];
+        }
+        
+        int low = 1; int high = nums.length - 2;
+        while(low <= high) {
+            int mid = low + ((high - low)/2);
+
+            if(nums[mid - 1] != nums[mid] && nums[mid] != nums[mid + 1]) {
+                return nums[mid];
+            } else if (nums[mid - 1] == nums[mid]) {
+                // left to the number, consecutive number pair will be (even_index, odd_index)
+                if(mid % 2 == 0) {
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            } else {
+                // right to the number, consecutive number pair will be (odd_index, even_index)
+                if(mid % 2 == 0) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+        }
+        return -1
+    }
+}
+// Time Complexity: O(log n)
+// Space Complexity: O(1)
+```
+
+## Q10. A peak element is an element that is strictly greater than its neighbors. Given a 0-indexed integer array nums, find a peak element, and return its index. If the array contains multiple peaks, return the index to any of the peaks.
+You may imagine that `nums[-1] = nums[n] = -∞`.
+
+*leetcode - [Find Peak Element](https://leetcode.com/problems/find-peak-element/description/)*
+
+```
+Examples:
+
+    Input: nums = [1,2,3,1]
+    Output: 2
+    Explanation: 3 is a peak element and your function should return the index number 2.
+    
+    Input: nums = [1,2,1,3,5,6,4]
+    Output: 5
+    Explanation: Your function can return either index number 1 where the peak element is 2, or index number 5 where the peak element is 6.
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** Check the edge cases
+
+    When only 1 element is available, its the peak
+    When nums[0] > nums[1], it can be a possible peak as imaginary nums[-1] is -∞
+    When nums[n-1] > nums[n-2], it can be a possible peak as imaginary nums[n] is -∞
+
+**Step 2:** Start iterating from 1st element and check if it is greater than its neighbours. If yes return the position.
+
+```java
+class Solution {
+    public int findPeakElement(int[] nums) {
+        if (nums.length == 1 || nums[0] > nums[1]){
+            return 0;
+        }
+        if (nums[nums.length - 1] > nums[nums.length - 2]) {
+            return nums.length - 1;
+        }
+        
+        for (int i = 1; i < nums.length - 1; i++) {
+            if (nums[i] > nums[i-1] && nums[i] > nums[i+1]){
+                return i;
+            }
+        }
+        return -1;
+    }
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+
+
+
+
+
+
+
