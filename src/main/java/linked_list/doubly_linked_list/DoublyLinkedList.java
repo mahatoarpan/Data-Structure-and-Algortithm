@@ -1,11 +1,13 @@
-package linked_list;
+package linked_list.doubly_linked_list;
+
+import linked_list.LinkedListException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DoublyLinkedList {
-    private DLLNode head;
-    private DLLNode tail;
+    private Node head;
+    private Node tail;
     private int size;
 
     public boolean isEmpty() {
@@ -16,7 +18,7 @@ public class DoublyLinkedList {
         if (isEmpty()){
             throw new LinkedListException("Empty List Exception");
         }
-        DLLNode currentNode = head;
+        Node currentNode = head;
         List<Integer> list = new ArrayList<>();
         while (currentNode != null) {
             list.add(currentNode.getData());
@@ -26,7 +28,7 @@ public class DoublyLinkedList {
     }
 
     public void insertAtHead(int data) {
-        DLLNode node = new DLLNode(data);
+        Node node = new Node(data);
         node.setNext(head);
         if (isEmpty()) {
             tail = node;
@@ -41,7 +43,7 @@ public class DoublyLinkedList {
         if (isEmpty()){
             insertAtHead(data);
         } else {
-            DLLNode node = new DLLNode(data);
+            Node node = new Node(data);
             tail.setNext(node);
             node.setPrevious(tail);
             tail = node;
@@ -49,12 +51,12 @@ public class DoublyLinkedList {
         size++;
     }
 
-    public void insert(int data, int position) {
-        if (position <= 0)      insertAtHead(data);
-        else if (position > size)    insertAtTail(data);
+    public void insertAt(int data, int position) {
+        if (position <= 0)              insertAtHead(data);
+        else if (position > size)       insertAtTail(data);
         else {
-            DLLNode node = new DLLNode(data);
-            DLLNode temp = head;
+            Node node = new Node(data);
+            Node temp = head;
             for (int i = 0; i < position; i++) {
                 temp = temp.getNext();
             }
@@ -66,11 +68,11 @@ public class DoublyLinkedList {
         size++;
     }
 
-    public DLLNode removeHead() throws LinkedListException {
+    public Node removeHead() throws LinkedListException {
         if (head == null) {
             throw new LinkedListException("Empty List Exception");
         }
-        DLLNode deletedNode = head;
+        Node deletedNode = head;
         head = head.getNext();
         if (head != null) {
             head.setPrevious(null);
@@ -82,11 +84,11 @@ public class DoublyLinkedList {
         return deletedNode;
     }
 
-    public DLLNode removeTail() throws LinkedListException {
+    public Node removeTail() throws LinkedListException {
         if (tail == null ) {
             throw new LinkedListException("Empty List Exception");
         }
-        DLLNode deletedNode = tail;
+        Node deletedNode = tail;
         tail = tail.getPrevious();
         if (tail != null) {
             tail.setNext(null);
@@ -98,7 +100,7 @@ public class DoublyLinkedList {
         return deletedNode;
     }
 
-    public DLLNode remove(int position) throws LinkedListException {
+    public Node removeAt(int position) throws LinkedListException {
         if (head == null) {
             throw new LinkedListException("Empty List Exception");
         } else  if (position <= 0) {
@@ -106,11 +108,11 @@ public class DoublyLinkedList {
         } else if (position >= size) {
             return removeTail();
         } else {
-            DLLNode temp = head;
+            Node temp = head;
             for (int i = 1; i < position; i++) {
                 temp = temp.getNext();
             }
-            DLLNode deletedNode = temp;
+            Node deletedNode = temp;
             temp.getNext().setPrevious(temp.getPrevious());
             temp.getPrevious().setNext(temp.getNext());
             return deletedNode;

@@ -1,16 +1,16 @@
 package queue;
 
-import linked_list.ListNode;
+import linked_list.singly_linked_list.LLNode;
 
 public class QueueLinkedListImpl {
-    ListNode front, rear;
+    LLNode front, rear;
 
     public boolean isEmpty() {
         return front == null;
     }
 
     public void enQueue(int data) {
-        ListNode node = new ListNode(data);
+        LLNode node = new LLNode(data);
         if (isEmpty()) {
             front = node;
         } else {
@@ -23,7 +23,7 @@ public class QueueLinkedListImpl {
         if (isEmpty()){
             throw new QueueException("Queue Underflow Exception");
         }
-        ListNode deletedNode = front;
+        LLNode deletedNode = front;
         front = front.getNext();
         int deletedData = deletedNode.getData();
         deletedNode = null;
