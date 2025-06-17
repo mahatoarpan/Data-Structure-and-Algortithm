@@ -1,17 +1,17 @@
 package stack;
 
-import linked_list.singly_linked_list.LLNode;
+import linked_list.singly_linked_list.Node;
 
 public class LinkedListStack {
     private static final String UNDERFLOW_EXCEPTION = "Stack is empty";
-    private LLNode top;
+    private Node top;
 
     public LinkedListStack() {
         top = null;
     }
 
     public void push(int data) {
-        LLNode temp = new LLNode(data);
+        Node temp = new Node(data);
         temp.setNext(top);
         top = temp;
     }
@@ -27,7 +27,7 @@ public class LinkedListStack {
         if (isEmpty()) {
             throw new StackException(LinkedListStack.UNDERFLOW_EXCEPTION);
         }
-        LLNode deletedNode = top;
+        Node deletedNode = top;
         int deletedData = deletedNode.getData();
         top = top.getNext();
         deletedNode = null;
