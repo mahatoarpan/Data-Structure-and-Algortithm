@@ -16,7 +16,7 @@ public class LinkedListStack {
         top = temp;
     }
 
-    public int peek() throws StackException {
+    public int top() throws StackException {
         if (isEmpty()) {
             throw new StackException(LinkedListStack.UNDERFLOW_EXCEPTION);
         }
@@ -28,10 +28,9 @@ public class LinkedListStack {
             throw new StackException(LinkedListStack.UNDERFLOW_EXCEPTION);
         }
         Node deletedNode = top;
-        int deletedData = deletedNode.getData();
         top = top.getNext();
-        deletedNode = null;
-        return deletedData;
+        deletedNode.setNext(null);
+        return deletedNode.getData();
     }
 
     private boolean isEmpty() {

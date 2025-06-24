@@ -3,9 +3,9 @@ package stack;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ParenthesesBalanceCheckerTest {
+public class ValidParenthesesTest {
 
-    ParenthesesBalanceChecker balanceChecker = new ParenthesesBalanceChecker();
+    ValidParentheses balanceChecker = new ValidParentheses();
 
     @Test
     public void test1() {

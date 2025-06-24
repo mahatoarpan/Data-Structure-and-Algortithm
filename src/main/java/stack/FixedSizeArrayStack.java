@@ -62,15 +62,15 @@ public class FixedSizeArrayStack {
     }
 
     public String toString() {
-        String s;
-        s = "[";
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
         if (!isEmpty()) {
-            s += stack[0];
+            sb.append(stack[0]);
             for (int i = 1; i <= top; i++) {
-                s += "," + stack[i];
+                sb.append(',').append(stack[i]);
             }
         }
-        s += "]";
-        return s;
+        sb.append(']');
+        return sb.toString();
     }
 }

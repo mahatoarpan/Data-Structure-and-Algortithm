@@ -25,13 +25,12 @@ public class QueueLinkedListImpl {
         }
         Node deletedNode = front;
         front = front.getNext();
-        int deletedData = deletedNode.getData();
-        deletedNode = null;
+        deletedNode.setNext(null);
         if (isEmpty()) {
             // check for the condition when queue gets empty after deQueue operation
             rear = null;
         }
-        return deletedData;
+        return deletedNode.getData();
     }
 
 }
