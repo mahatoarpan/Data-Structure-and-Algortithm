@@ -1471,8 +1471,8 @@ public class Solution {
         Input: matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
         Output: [[0,0,0,0],[0,4,5,0],[0,3,1,0]]
 
-![Example 1](../../../../images/set_matrix_zeroes1.png)
-![Example 2](../../../../images/set_matrix_zeroes2.png)
+![Example 1](../images/set_matrix_zeroes1.png)
+![Example 2](../images/set_matrix_zeroes2.png)
 
 
 ### Approach 1: Brute force

@@ -490,7 +490,7 @@ Output: ((A-(B/C))*((A/K)-L))
 
 ### Approach
 
-**Step 1:** Scan the postfix expression from right to left.
+**Step 1:** Scan the prefix expression from right to left.
 
 **Step 2:** If the scanned character is an operand, add it to stack.
 
@@ -500,15 +500,15 @@ Output: ((A-(B/C))*((A/K)-L))
 
 ```java
 public class Solution {
-    public String postfixToInfix(String s) {
+    public String prefixToInfix(String s) {
         ArrayDeque<String> stack = new ArrayDeque<>();
-        for(int i = 0; i < s.length(); i++) {
+        for(int i = s.length() - 1; i >= 0; i--) {
             char ch = s.charAt(i);
             if (Character.isLetterOrDigit(ch)) {
                 stack.push("" + ch);
             } else {
-                String right = stack.pop();
                 String left = stack.pop();
+                String right = stack.pop();
                 stack.push("(" + left + ch + right + ")");
             }
         }
@@ -517,5 +517,227 @@ public class Solution {
 }
 // Time Complexity: O(n)
 // Space Complexity: O(n)
+```
+
+## Q8. Given an postfix expression, your task is to convert the given postfix expression to an prefix expression.
+
+```
+Examples:
+
+Input :  Postfix : AB+CD-* 
+Output : Prefix :  *+AB-CD
+
+Input :  Postfix : ABC/-AK/L-*
+Output : Prefix :  *-A/BC-/AKL
+```
+
+### Approach
+
+**Step 1:** Scan the postfix expression from left to right.
+
+**Step 2:** If the scanned character is an operand, add it to stack.
+
+**Step 3:** Else pop 2 elements from the stack and put current character(operator) left to the operands.
+
+**Step 4:** Pop the stack to get the final result once the scan is completed.
+
+```java
+
+```public class Solution {
+    public String postfixToPrefix(String s){
+        ArrayDeque<String> stack = new ArrayDeque<>();
+        for(int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                stack.push("" + ch);
+            } else {
+                String right = stack.pop();
+                String left = stack.pop();
+                stack.push( "" + ch + left + right);
+            }
+        }
+        return stack.pop();
+    }
+}
+```
+
+## Q9. Given an prefix expression, your task is to convert the given prefix expression to an postfix expression.
+
+```
+Examples:
+
+Input :  Prefix :  *+AB-CD
+Output : Postfix : AB+CD-*
+
+Input :  Prefix :  *-A/BC-/AKL
+Output : Postfix : ABC/-AK/L-*
+```
+
+### Approach
+
+**Step 1:** Scan the prefix expression from right to righleftt.
+
+**Step 2:** If the scanned character is an operand, add it to stack.
+
+**Step 3:** Else pop 2 elements from the stack and put current character(operator) right to the operands.
+
+**Step 4:** Pop the stack to get the final result once the scan is completed.
+
+```java
+public class Solution {
+    public String postfixToPrefix(String s){
+        ArrayDeque<String> stack = new ArrayDeque<>();
+        for(int i = s.length() - 1; i >= 0; i--) {
+            char ch = s.charAt(i);
+            if (Character.isLetterOrDigit(ch)) {
+                stack.push("" + ch);
+            } else {
+                String left = stack.pop();
+                String right = stack.pop();
+                stack.push(left + right + ch);
+            }
+        }
+        return stack.pop();
+    }
+}
+```
+
+## Q10. Given an integer array A, return the next greater element for every element in A. 
+
+*leetcode - [Next Greater Element I](https://leetcode.com/problems/next-greater-element-i/description/)*
+
+The next greater element for an element x is the first element greater than x that we come across while traversing the array in a clockwise manner. If it doesn't exist, return -1 for this element.
+
+```
+Examples:
+
+Input: nums1 = [4,1,2], nums2 = [1,3,4,2]
+Output: [-1,3,-1]
+Explanation: The next greater element for each value of nums1 is as follows:
+- 4 is underlined in nums2 = [1,3,4,2]. There is no next greater element, so the answer is -1.
+- 1 is underlined in nums2 = [1,3,4,2]. The next greater element is 3.
+- 2 is underlined in nums2 = [1,3,4,2]. There is no next greater element, so the answer is -1.
+
+```
+
+### Approach 1: Brute Force
+
+**Step 1:** Standing at the position check all the elements from `position + 1` till the end. Break out when an element found that is greater than element at position.
+
+**Step 2:** Store the values in hashmap.
+
+**Step 3:** Iterate over nums1 and fetch the value in hashmap.
+
+```java
+public class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        int[] result = new int[nums1.length];
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for(int i = 0; i < nums2.length; i++) {
+            for(int j = i + 1; j < nums2.length; j++) {
+                if(nums2[j] > nums2[i]) {
+                    map.put(nums2[i], nums2[j]);
+                    break;
+                }
+            }
+            if(!map.containsKey(nums2[i])) {
+                map.put(nums2[i], -1);
+            }
+        }
+
+        for(int i = 0; i < nums1.length; i++) {
+            result[i] = map.get(nums1[i]);
+        }
+        return result;
+    }
+} 
+// Time Complexity: O(n2 ^ 2) + o(n1), n1 = length of nums1, n2 = length of nums2
+// Space Complexity: O(n1) + O(n2)
+```
+
+### Approach 2: Optimal
+
+**Step 1:** Initialize a stack
+
+**Step 2:** Traverse nums2 array from back.
+
+**Step 3:** While traversing the array store the number in stack if stack is empty or stack.top is greater than the number
+
+**Step 4:** Else remove numbers from stack until stack is empty or stack.pop becomes less than the current number
+
+
+```java
+public class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        int[] result = new int[nums1.length];
+        Map<Integer, Integer> map = new HashMap<>();
+        ArrayDeque<Integer> st = new ArrayDeque<>();
+
+        for(int i = nums2.length - 1; i >= 0; i--) {
+            while(!stack.isEmpty() && stack.peek() < nums2[i]) {
+                stack.pop();
+            }
+            if(stack.isEmpty()) {
+                map.put(nums2[i], -1);
+            } else {
+                map.put(nums2[i], stack.peek());
+            }
+            stack.push(nums2[i]);
+        }
+
+        for(int i = 0; i < nums1.length; i++) {
+            result[i] = map.get(nums1[i]);
+        }
+        return result;
+    }
+} 
+// Time Complexity: O(n1) + O(2 * n2)
+// Space Complexity: O(n1) + O(n2) + O(n2)
+```
+
+## Q11. Given a circular integer array A, return the next greater element for every element in A. 
+
+*leetcode - [Next Greater Element](https://leetcode.com/problems/next-greater-element-ii/description/)*
+
+```
+Example 1: 
+
+Input: N = 11, A[] = {3,10,4,2,1,2,6,1,7,2,9}
+Output: 10,-1,6,6,2,6,7,7,9,9,10
+```
+
+### Approach 1: Optimal
+
+Problem can be solved by using the optimal solution of the previous solution. he only difference between a circular and non-circular array is that while searching for the next greater element in a non-circular array we don’t consider the elements left to the concerned element. This can be easily done by inserting the elements of the array A at the end of A, thus making its size double. But we actually don’t require any extra space. We can just traverse the array twice. We actually run a loop 2*N times, where N is the size of the given array.
+
+```java
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        int[] res = new int[nums.length];
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+
+        for(int i = nums.length - 1; i >= 0; i--) {
+            while(!stack.isEmpty() && stack.peek() <= nums[i]) {
+                stack.pop();
+            }
+            res[i] = stack.isEmpty() ? Integer.MIN_VALUE : stack.peek();
+            stack.push(nums[i]);
+        }
+
+        for(int i = nums.length-1; i >= 0; i--) {
+            if(res[i] == Integer.MIN_VALUE) {
+                while(!stack.isEmpty() && stack.peek() <= nums[i]) {
+                    stack.pop();
+                }
+                res[i] = stack.isEmpty() ? -1 : stack.peek();
+                stack.push(nums[i]);
+            } 
+        }
+        return res;
+    }
+}
+// Time Complexity: O(2n)
+// Space Complexity: O(2n)
 ```
 
