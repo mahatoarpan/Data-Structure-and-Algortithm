@@ -1394,3 +1394,125 @@ private boolean dfs(TreeNode node, TreeNode target, List<Integer> path) {
 
 }
 ```
+
+## Q13. Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+
+*leetcode - [Lowest Common Ancestor of a Binary Tree](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/description/)*
+
+*"The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).”*
+
+```
+Examples:
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+Output: 3
+Explanation: The LCA of nodes 5 and 1 is 3.
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+Output: 5
+Explanation: The LCA of nodes 5 and 4 is 5, since a node can be a descendant of itself according to the LCA definition.
+```
+
+![Tree 1](../images/bin_tree7.png "Tree 1")
+
+### Approach 1:
+
+**Step 1:** Build and store the paths from root to node p and q.
+
+**Step 2:** Start comparing the paths from left to right and when the path value changes return the previous nodes value.
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        List<TreeNode> pPath = new ArrayList<>();
+        List<TreeNode> qPath = new ArrayList<>();
+
+        getPath(root, p, pPath);
+        getPath(root, q, qPath);
+
+        int i = 0;
+        while(i < pPath.size() && i < qPath.size()) {
+            if(pPath.get(i) != qPath.get(i)) {
+                break;
+            }
+            i++;
+        }
+
+        return pPath.get(i-1);
+    }
+
+    private boolean getPath(TreeNode node, TreeNode target, List<TreeNode> path) {
+        if (node == null) return false;
+
+        path.add(node);  // add node on the way down
+
+        if (node == target) return true;
+
+        if (getPath(node.left, target, path) || getPath(node.right, target, path)) {
+            return true;
+        }
+
+        path.remove(path.size() - 1);  // backtrack if not in path
+        return false;
+    }
+}
+// Time Complexity: O(2n)
+// Space Complexity: O(2n)
+```
+
+### Approach 2:
+
+**Step 1:** Recursively traverse the tree
+
+**Step 2:** If the current node (root) is null, or matches p or q, return it. This means you’ve found one of the targets or reached the end.
+
+**Step 3:** Recursively search the left and right subtree to find p and q.
+
+**Step 4:** If any one the recursive call returns null, return the not-null one. This means both p and q are found in the same subtree.
+
+**Step 5:** If both are non-null, return the current node. This means one node is in the left subtree and other in the right subtree.
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root == null || root == p || root == q) {
+            return root;
+        }
+
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+
+        if(left == null) {
+            return right;
+        } else if ( right == null) {
+            return left;
+        } else {
+            return root;
+        }
+    }
+     
+}
+// Time Complexity: O(n)
+// Space Complexity: O(1)
+```
+
+
+
