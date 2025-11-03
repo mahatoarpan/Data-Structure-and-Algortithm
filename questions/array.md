@@ -320,7 +320,7 @@ public class Solution {
             if (nums[i] == nums[j]) {
                 j++;
             } else {
-                nums[i++] = nums[j];
+                nums[++i] = nums[j];
             }
         }
         return i + 1;
