@@ -404,13 +404,13 @@ public class Solution {
 // Space Complexity: O(k)
 ```
 
-### Approach 2: Better
+### Approach 3: Optimal
 
-**Step 1:** Copy last `k` elements into new array
+**Step 1:** Reverse the array
 
-**Step 2:** Move first `n-k` elements by `k` steps
+**Step 2:** Reverse the array between `0` and `k-1`
 
-**Step 3:** Copy the temp array data to `0-k` elements
+**Step 3:** Reverse array between `k` and `n`
 
 ```java
 public class Solution {
